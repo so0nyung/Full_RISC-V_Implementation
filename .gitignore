@@ -1,0 +1,15 @@
+# Build & simulation files
+*.o
+*.out
+*.vcd
+*.vvp
+*.log
+*.d
+*.elf
+*.bin
+
+# Verilator cache
+obj_dir/
+simv*
+.vscode/
+test_out/
