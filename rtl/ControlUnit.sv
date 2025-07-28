@@ -64,6 +64,7 @@ always_comm begin
             ImmSrc     = 3'b000;
             ALUControl = 4'b0000; // add
         end
+        
     7'b0100011: begin // Store
             MemWrite   = 1;
             ALUSrc     = 1;
