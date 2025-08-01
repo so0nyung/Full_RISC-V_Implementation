@@ -1,5 +1,5 @@
 module CREmux #(
-    paramter DATA_WIDTH = 32
+    parameter DATA_WIDTH = 32
 )(
     input logic [DATA_WIDTH-1:0] ImmExt,
     input logic [DATA_WIDTH-1:0] RD2,

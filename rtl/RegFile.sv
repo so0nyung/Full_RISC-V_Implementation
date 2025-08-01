@@ -1,6 +1,6 @@
 module RegFile #(
     parameter DATA_WIDTH = 32,
-    parameter NUM_REGS = 64
+    parameter NUM_REGS = 32
 )(
     input logic clk,
     input logic [$clog2(NUM_REGS)-1 :0] A1,
