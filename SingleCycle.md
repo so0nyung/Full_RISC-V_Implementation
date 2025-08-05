@@ -226,3 +226,9 @@ The inputs of the CREtop is just the instruction, a zero input, WD3 and the clk,
 
 ### Testing
 To test this, we need to start putting real hexadecimal value instructions, instead of individual values. This perhaps had one of the most extensive testings, because we are testing ALL the instructions. Yes, every possible combination, all XYZ many instructions there are. And these are just the ones in the freaking lectures slides good god this is unprofessional. 
+
+The key thing is for ImmSrc we are gonna use the opcode only, whereas alu needs multiple inputs :)
+
+Ok getting more sporadic. I decided to test the SignExtension unit sepeartedly, because it would be easier to test both my understanding of my code and testing it. And they both work :)
+
+![Evidence Both Pass](./images/CREPass.png)

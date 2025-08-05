@@ -5,15 +5,15 @@ module CREtop #(
     input logic clk,
     input logic zero,
     input logic [DATA_WIDTH-1:0] WD3,
-    output logic PCSrc,
-    output logic ResultSrc,
-    output logic MemWrite,
-    output logic [3:0] ALUControl,
-    output logic ALUSrc,
-    output logic [2:0] ImmSrc,
-    output logic RegWrite,
-    output logic [DATA_WIDTH-1:0] SrcA,
-    output logic [DATA_WIDTH-1:0] SrcBOut
+    output logic PCSrc, // Use for branching 
+    output logic ResultSrc, // To determine if we read additional value or not
+    output logic MemWrite, // To write to memory
+    output logic [3:0] ALUControl, // What math instruction
+    output logic ALUSrc, // To use immediate or register value
+    output logic [2:0] ImmSrc, // What immediate operation to do
+    output logic RegWrite, // To write to register or not
+    output logic [DATA_WIDTH-1:0] SrcA, // Value of SrcA
+    output logic [DATA_WIDTH-1:0] SrcBOut // Value of SrcB
 );
 
 // Internal Wires
