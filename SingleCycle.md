@@ -232,3 +232,35 @@ The key thing is for ImmSrc we are gonna use the opcode only, whereas alu needs 
 Ok getting more sporadic. I decided to test the SignExtension unit sepeartedly, because it would be easier to test both my understanding of my code and testing it. And they both work :)
 
 ![Evidence Both Pass](./images/CREPass.png)
+
+With that, we're onto the next section: The PC Register
+
+## PC & Instruction Memory (PCI)
+This section (arguably) has the easiest part. It's made of three components:
+1. Instruction memory - this where the instructions are accessed/ stored
+2. Multiplexor - to decide which instruction to go to
+3. PCPlus 4- literally a simple adder
+4. A simple clk register - This is to prevent a circular logic from spiralling out of control
+
+### Instruction Memory
+We have to modify what we did in lab 4, because now we have specific memory sectioned-off for isntruction memory:
+
+It takes the lower 12 bits of the PC (program counter) and uses them as a byte address into the ROM. Since instructions are 32 bits (4 bytes) but the ROM stores 8-bit bytes, it concatenates 4 consecutive bytes:
+
+`rom[pc[11:0]]` - least significant byte (byte 0)
+`rom[pc[11:0] + 1]`- byte 1
+`rom[pc[11:0] + 2]` - byte 2
+`rom[pc[11:0] + 3]` - most significant byte (byte 3)
+
+The concatenation {...} puts them in big-endian order (most significant byte first).
+
+### PCImux
+It's basically a multiplexor using `PCSrc` as the sorter.
+
+### PCPlus4
+Since RISC-V instructions are 4-bytes long, we can simply find the next instruction by jumping 4 more bytes.
+
+### All together
+Once we create the top module, we can begin to test it. For this, we create a sample `program.hex` file, with random 4-byte words. The contents don't really matter, because we're simply testing if the jumping works.
+
+It's important to note that the way the `.hex` file is set is in terms of bytes. Remember the RISC-V is a "byte-addressing processor", meaning that the way we write the `.hex` file needs to be different.
