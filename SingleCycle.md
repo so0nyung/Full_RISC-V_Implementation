@@ -264,3 +264,4 @@ Since RISC-V instructions are 4-bytes long, we can simply find the next instruct
 Once we create the top module, we can begin to test it. For this, we create a sample `program.hex` file, with random 4-byte words. The contents don't really matter, because we're simply testing if the jumping works.
 
 It's important to note that the way the `.hex` file is set is in terms of bytes. Remember the RISC-V is a "byte-addressing processor", meaning that the way we write the `.hex` file needs to be different.
+But now it works :)
