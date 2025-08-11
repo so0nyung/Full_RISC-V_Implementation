@@ -7,6 +7,6 @@ module CREmux #(
     output logic [DATA_WIDTH-1:0] SrcB
 );
 
-assign SrcB = (ALUsrc) ? RD2  : ImmExt;
+assign SrcB = (ALUsrc) ? ImmExt  : RD2;
 
 endmodule

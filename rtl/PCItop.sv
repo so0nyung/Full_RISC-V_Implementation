@@ -5,14 +5,16 @@ module PCItop#(
     input logic PCSrc,
     input logic [DATA_WIDTH-1:0] PCTarget,
     output logic [DATA_WIDTH-1:0] Instr,
-    output logic [DATA_WIDTH-1:0] PC
+    output logic [DATA_WIDTH-1:0] PC,
+    output logic [DATA_WIDTH-1:0] PCPlus4
 );
 
 
 // Internal Wires
 logic [DATA_WIDTH-1:0] Int_PCPlus4;
 logic [DATA_WIDTH-1:0] Int_PC;
-logic [DATA_WIDTH-1:0] Reg_PC = 0; // Internal Register, initialised at 0
+// ============ FLAGGED OUT WARNING MAY NEED TO REINSTITUTE
+logic [DATA_WIDTH-1:0] Reg_PC; // Internal Register, initialised at 0
 
 PCImux #(
     .DATA_WIDTH(DATA_WIDTH)
@@ -43,5 +45,6 @@ end
 
 // Testing purposes
 assign PC = Reg_PC; // Next PC
+assign PCPlus4 = Int_PCPlus4;
 
 endmodule

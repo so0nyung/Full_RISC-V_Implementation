@@ -11,6 +11,6 @@ module InstMem #(
     end
 
     initial begin
-        $readmemh("program.hex", rom); // 17'h10000
+        $readmemh("program.hex", rom);
     end
 endmodule

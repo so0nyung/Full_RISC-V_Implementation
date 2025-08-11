@@ -24,6 +24,8 @@ always_comb begin
         4'b0111: ALUResult = SrcA >> shiftAmt; // Shift Right Logical (SRL)
         4'b1000: ALUResult = signedA >>> shiftAmt; // Shift Right Arithmetic (SRA)
         4'b1001: ALUResult = (SrcA < SrcB) ? 32'b1 : 32'b0; //Unsigned Less Than (ULT)
+        4'b1010: ALUResult = SrcA << shiftAmt;    // SLL (Shift Left Logical)
+
         // ========== Blank Registers ========== //
         // 4'b1011: 
         // 4'b1100:
@@ -35,4 +37,4 @@ always_comb begin
     Zero = (ALUResult == 0);
 end
 
-endmodule;
+endmodule

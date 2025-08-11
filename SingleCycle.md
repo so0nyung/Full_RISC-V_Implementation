@@ -265,3 +265,55 @@ Once we create the top module, we can begin to test it. For this, we create a sa
 
 It's important to note that the way the `.hex` file is set is in terms of bytes. Remember the RISC-V is a "byte-addressing processor", meaning that the way we write the `.hex` file needs to be different.
 But now it works :)
+
+
+## Assemble together
+So now we can start to assemble a `top.sv`. The goal of this is to reduce our inputs to just a `clk`, and ideally zero outputs, though based on the tests in `verify.cpp`, we need to have an `a0` output to test stuff... but we'll see.
+
+For now the main goal is to connect all the different top modules together.
+
+At this point, is where a lot of design issues came to light, so I needed to rewrite some modules.
+1. DataMemory
+A persistant warning where not all the bits were used kept getting flagged, and I realised that I didn't implement loading for full-word, half-word and byte functions. So, I rewrote the data memory to include the `funct3` input. The idea is that if they are required the `ResultSrc` would retrieve the read data from the multiplexor anyway. 
+
+2. Latching issues
+In my sign extension file, I kept getting a latching warning, as I had cases that used temporary wires established only within the case specific instances within an `always_comb` function. For example:
+```
+3'b001:begin
+            logic [11:0] immS // <=== This is the initialisation that kept throwing a warning
+            immS = {ImmInput[31:25],ImmInput[11:7]};
+            Int_ImmExt = {{20{immS[11]}}, immS};
+```
+The warning is thrown because in other cases, `immS` is not explicitly created, let alone given a value, so the program has no idea what to do with it.
+To fix this, I initialised the internal wires outside of the `always_comb` function.
+```
+logic [11:0] immS;
+logic [12:0] immB;
+logic [20:0] immJ;
+
+logic   [DATA_WIDTH-1:0] Int_ImmExt;
+always_comb begin
+    //Initialising 
+    immS = '0;
+    immB = '0;
+    immJ = '0;
+    Int_ImmExt = '0;
+```
+3. ALU stuff
+I realised I never implemented SLL in my ALU (oops) and my Control unit was wrong, so I adjusted those
+## Testing (5 Instructions)
+Alright so the we are testing 5 given instructions. After some tinkering with where I should get my `program.hex` file from, my first run through passed 3 of the 5 tests successfully: `1_addi_bne`, `2_li_add` and `3_lbu_sb`. Which is great. Unfortunately, that means I failed the last two instructions - `4_jal_ret` and `5_pdf`...
+
+#### Issues faced
+Just briefly looking at the `.asm` files, I see several issues:
+- In `4_jal_ret`, I only looped once before exiting, meaning that I only looped through once
+
+
+In general, it meant that my CPU is not correctly routing my PC+4 instructions for JAL, so I had to rewrite the Control Unit a bit, and added a new unit - `JumpMux` and a new signal - `Jump`. Naturally, this meant I have to rewrite all the top modules...
+
+Then I realised I am not handling JALR (return function) well so I need to change that. In a less than elegant solution, I simply added opcodes to my PCTarget.sv file and created a special case for `jalr` instruction, and created a new case in my Control Unit, which thank fully passed the testcase.
+
+Now I just need to contend with the last test case, `5_pdf`. It wasn't so bad, I just forgot to uncomment out the reading of the data memory. So we're done !!
+
+
+![Passing Given Tests](./images/GivenTestPass.png)
