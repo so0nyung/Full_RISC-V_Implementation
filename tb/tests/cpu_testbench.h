@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility>
+#include <memory>
 
 #include "Vdut.h"
 #include "verilated.h"
@@ -42,10 +43,10 @@ public:
 
         // Initialise inputs
         top_->clk = 1;
-        top_->rst = 1;
-        top_->trigger = 0;
+        // top_->rst = 1;
+        //top_->trigger = 0;
         runSimulation(10);  // Process reset
-        top_->rst = 0;
+        // top_->rst = 0;
     }
 
     // Runs the simulation for a clock cycle, evaluates the DUT, dumps waveform.
