@@ -11,7 +11,7 @@ module PCTarget #(
 // New JALR added conditions
 always_comb begin
     if (op == 7'b1100111) begin // JALR
-        PCTarget = ALUResult & ~32'b1; // follows this instruction-> (rs1 + imm) & ~1
+        PCTarget = ALUResult & 32'hFFFFFFFE; // follows this instruction-> (rs1 + imm) & ~1
     end else begin // JAL and branches
         PCTarget = PC + ImmExt;
     end

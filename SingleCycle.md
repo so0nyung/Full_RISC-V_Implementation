@@ -315,5 +315,19 @@ Then I realised I am not handling JALR (return function) well so I need to chang
 
 Now I just need to contend with the last test case, `5_pdf`. It wasn't so bad, I just forgot to uncomment out the reading of the data memory. So we're done !!
 
-
 ![Passing Given Tests](./images/GivenTestPass.png)
+
+## F1 lights
+As per the instructions, we need to create a F1 light with sevreal instructions:
+1. We need to install a `trigger` and a `rst` to control the F1 instructions.
+2. An assembly file with at least one subroutine, so I must use the JAL instruction
+3. A proper testbench. Since I am unable to use a Vbuddy to properly simulate this, I need to devise another method showing it works.
+
+### Additional inputs - `trigger` and `rst`
+For now, the most important thing is I need to add these to the correct modules. Ok they work now :)
+
+### F1 assembly code
+To simulate the F1 code, I reused the code I did in the actual project. Although a cope-out, this meant I have to make sure that 1. It works with my CPU, 2. I make a suitable testbench for it to work.
+
+### Testing
+There a lot of components for this. To make it easier I 

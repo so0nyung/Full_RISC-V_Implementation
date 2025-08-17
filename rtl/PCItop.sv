@@ -3,6 +3,8 @@ module PCItop#(
 )(
     input logic clk,
     input logic PCSrc,
+    input logic trigger,
+    input logic rst,
     input logic [DATA_WIDTH-1:0] PCTarget,
     output logic [DATA_WIDTH-1:0] Instr,
     output logic [DATA_WIDTH-1:0] PC,
@@ -39,8 +41,14 @@ InstMem #(
     .Instr(Instr)
 );
 
-always_ff @(posedge clk) begin
-    Reg_PC <= Int_PC;
+always_ff @(posedge clk or posedge rst) begin
+    if(rst) begin
+        Reg_PC <= '0; // Reset PC
+    end else if (trigger) begin
+        Reg_PC <= Int_PC; //Continue iteration
+    end else begin
+        Reg_PC <= Reg_PC;     // hold PC until trigger goes high
+    end
 end
 
 // Testing purposes

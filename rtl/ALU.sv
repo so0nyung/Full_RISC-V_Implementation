@@ -21,8 +21,8 @@ always_comb begin
         4'b0100: ALUResult = SrcB;    //LOAD IMMEDIATE
         4'b0101: ALUResult = SrcA ^ SrcB;    // XOR
         4'b0110: ALUResult = ($signed(SrcA) < $signed(SrcB)) ? 32'b1 : 32'b0;  // Signed Less Than (SLT)
-        4'b0111: ALUResult = SrcA >> shiftAmt; // Shift Right Logical (SRL)
-        4'b1000: ALUResult = signedA >>> shiftAmt; // Shift Right Arithmetic (SRA)
+        4'b0111: ALUResult = signedA >>> shiftAmt; // Shift Right Logical (SRL)
+        4'b1000: ALUResult = SrcA >> shiftAmt ; // Shift Right Arithmetic (SRA)
         4'b1001: ALUResult = (SrcA < SrcB) ? 32'b1 : 32'b0; //Unsigned Less Than (ULT)
         4'b1010: ALUResult = SrcA << shiftAmt;    // SLL (Shift Left Logical)
 

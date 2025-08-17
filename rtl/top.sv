@@ -2,6 +2,9 @@ module top#(
     parameter DATA_WIDTH =32
 )(
     input logic clk,
+    input logic trigger,
+    input logic rst,
+    output [3:0] RanNum,
     output [DATA_WIDTH-1 :0] a0
 );
 
@@ -33,6 +36,8 @@ PCItop #(
 ) PCI(
     //Input
     .clk(clk),
+    .trigger(trigger),
+    .rst(rst),
     .PCSrc(Int_PCSrc), // Decides what output to put
     .PCTarget(Int_PCTarget),
     //Output
@@ -48,7 +53,7 @@ CREtop #(
     .clk(clk),
     .zero(Int_zero), // From ADPtop
     .WD3(Int_WD3), // From ADPtop
-    .PCPlus4(Int_PCPlus4),
+    // .PCPlus4(Int_PCPlus4),
     //Outputs - Majority to send to ADPtop
     .PCSrc(Int_PCSrc), // 1-bit -> Send to PCItop
     .ResultSrc(Int_ResultSrc), // 1-bit
@@ -87,6 +92,11 @@ ADPtop #(
     .Zero(Int_zero), // To ADPtop
     .Result(Int_WD3), // To send to CREtop
     .PCTarget(Int_PCTarget) // To send to PCItop
+);
+
+lfsr RanGen(
+    .clk(clk),
+    .data_out(RanNum)
 );
 
 endmodule

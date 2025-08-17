@@ -5,7 +5,7 @@ module CREtop #(
     input logic clk,
     input logic zero,
     input logic [DATA_WIDTH-1:0] WD3,
-    input logic [DATA_WIDTH-1:0] PCPlus4, //PCPlus4 Input
+    // input logic [DATA_WIDTH-1:0] PCPlus4, //PCPlus4 Input
     output logic PCSrc, // Use for branching 
     output logic ResultSrc, // To determine if we read additional value or not
     output logic MemWrite, // To write to memory

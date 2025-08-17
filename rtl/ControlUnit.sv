@@ -51,8 +51,8 @@ always_comb begin
                     3'b110: ALUControl = 4'b0011; // ori
                     3'b100: ALUControl = 4'b0101; // xori
                     3'b001: ALUControl = 4'b1010; // slli
-                    3'b101: ALUControl = (funct7 == 7'b0100000) ? 4'b0111 : 4'b0110; // srai/srli
-                    3'b010: ALUControl = 4'b1000; // slti
+                    3'b101: ALUControl = (funct7 == 7'b0100000) ? 4'b1000 : 4'b0111; // srai/srli
+                    3'b010: ALUControl = 4'b0110; // slti
                     3'b011: ALUControl = 4'b1001; // sltiu
                     default: ALUControl = 4'b0000;
             endcase
@@ -95,7 +95,7 @@ always_comb begin
                 ALUSrc     = 1;
                 RegWrite   = 1;
                 ImmSrc     = 3'b011;
-                ALUControl = 4'b0000;
+                ALUControl = 4'b0100; 
             end
 
             default: begin
