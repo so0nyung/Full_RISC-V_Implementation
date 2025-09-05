@@ -1,4 +1,4 @@
-module ADPmux #(
+module ResultMux #(
     parameter DATA_WIDTH = 32
 
 )(

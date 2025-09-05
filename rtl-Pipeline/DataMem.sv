@@ -7,7 +7,7 @@ module DataMem #(
     input logic MemWrite, // Write Enable (WE)
     input logic [DATA_WIDTH-1:0] A, // Address / ALUResult
     input logic [DATA_WIDTH -1 :0] WD, // Write Data
-    output logic [DATA_WIDTH -1 :0] RD // Read Data
+    output logic [DATA_WIDTH-1 :0] RD // Read Data
 );
 
 //initialise memory

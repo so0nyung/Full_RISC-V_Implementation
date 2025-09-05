@@ -1,3 +1,4 @@
+// REDUNDANT - TO REMOVE
 module PCItop#(
     parameter DATA_WIDTH =32
 )(
