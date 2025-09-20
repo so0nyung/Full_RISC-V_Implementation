@@ -3,13 +3,14 @@ module top #(
 )(
     input logic clk,
     input logic rst,
+    input logic trigger,
     //Debugging outputs
     output logic [DATA_WIDTH-1:0] t1,
     output logic [DATA_WIDTH-1:0] t2,
     output logic [DATA_WIDTH-1:0] t3,
     output logic [DATA_WIDTH-1:0] t4,
     output logic [DATA_WIDTH-1:0] s0,
-
+    output logic [3:0] RanNum,
     //Test output
     output logic [DATA_WIDTH-1:0] a0
 );
@@ -135,6 +136,10 @@ logic Int_RegWriteWD;
 logic [4:0] Int_RdWD;
 logic [DATA_WIDTH -1:0] Int_ResultWD;
 
+lfsr RandomNum(
+    .clk(clk),
+    .data_out(RanNum)
+);
 
 IFtop #(
     .DATA_WIDTH(DATA_WIDTH)
