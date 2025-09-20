@@ -18,8 +18,6 @@ module HazardUnit (
     input logic [4:0] Rs2D,    // From IDtop
     
     // Control Hazard Detection
-    // input logic BranchD,       // From IDtop (decode stage control signals)
-    // input logic JumpD,         // From IDtop
     input logic PCSrcE,        // From Execute stage (indicates taken branch/jump)
 
     // Pipeline control outputs
@@ -31,113 +29,73 @@ module HazardUnit (
     // Data Forwarding outputs  
     output logic [1:0] ForwardAE, // For Rs1E
     output logic [1:0] ForwardBE  // For Rs2E
-);
-
-    // Forwarding constants
-    localparam [1:0] FORWARD_REG = 2'b00;  // Use register file (no forwarding)
-    localparam [1:0] FORWARD_MEM = 2'b10;  // Forward from MEM stage (ALUResultM)
-    localparam [1:0] FORWARD_WB  = 2'b01;  // Forward from WB stage (ResultW)
-    
+);    
+    // DATA FORWARDING LOGIC
+    always_comb begin
+        // Default: Use register file (no forwarding)
+        ForwardAE = 2'b00;  
+        ForwardBE = 2'b00;
+        
+        // Forwarding for Rs1E MEM stage priority over WB stage (MEM is more recent)
+        if (RegWriteM && (RdM != 5'b0) && (RdM == Rs1E)) begin
+            ForwardAE = 2'b10;  // Forward from MEM stage (ALUResultM)
+        end else if (RegWriteW && (RdW != 5'b0) && (RdW == Rs1E) && 
+                     !(RegWriteM && (RdM != 5'b0) && (RdM == Rs1E))) begin
+            ForwardAE = 2'b01;  // Forward from WB stage (ResultW)
+        end
+        
+        // Forwarding for Rs2E 
+        // Priority: MEM stage > WB stage (MEM is more recent)
+        if (RegWriteM && (RdM != 5'b0) && (RdM == Rs2E)) begin
+            ForwardBE = 2'b10;  // Forward from MEM stage (ALUResultM)
+        end else if (RegWriteW && (RdW != 5'b0) && (RdW == Rs2E) && 
+                     !(RegWriteM && (RdM != 5'b0) && (RdM == Rs2E))) begin
+            ForwardBE = 2'b01;  // Forward from WB stage (ResultW)
+        end
+    end
     // Internal signals for hazard detection
     logic LoadUseHazard;
     logic ControlHazard;
 
-    // DATA FORWARDING LOGIC
-    // Handles RAW (Read After Write) hazards by forwarding data from later stages
-    always_comb begin
-        // Default: no forwarding, use register file
-        ForwardAE = FORWARD_REG;
-        ForwardBE = FORWARD_REG;
-        
-        // Forwarding for Rs1E (operand A)
-        // Priority: MEM stage > WB stage (MEM is more recent)
-        if (RegWriteM && (RdM != 5'b0) && (RdM == Rs1E)) begin
-            ForwardAE = FORWARD_MEM;
-        end else if (RegWriteW && (RdW != 5'b0) && (RdW == Rs1E) && 
-                     !(RegWriteM && (RdM != 5'b0) && (RdM == Rs1E))) begin
-            ForwardAE = FORWARD_WB;
-        end
-        
-        // Forwarding for Rs2E (operand B)
-        // Priority: MEM stage > WB stage (MEM is more recent)
-        if (RegWriteM && (RdM != 5'b0) && (RdM == Rs2E)) begin
-            ForwardBE = FORWARD_MEM;
-        end else if (RegWriteW && (RdW != 5'b0) && (RdW == Rs2E) && 
-                     !(RegWriteM && (RdM != 5'b0) && (RdM == Rs2E))) begin
-            ForwardBE = FORWARD_WB;
-        end
-    end
 
-    // LOAD-USE HAZARD DETECTION
-    // Detects when a load instruction in execute stage is immediately followed
-    // by an instruction in decode stage that uses the loaded data
+    // Hazard Detection
     always_comb begin
         LoadUseHazard = 1'b0;
-        
-        // Check if current execute instruction is a load (MemReadE = 1)
-        // and the decode stage instruction uses the destination register
+        ControlHazard = 1'b0;
+
+        //Load Hazard Detection
         if (MemReadE && (RdE != 5'b0)) begin
-            if ((RdE == Rs1D) || (RdE == Rs2D)) begin
+            // Check if the instruction in decode stage needs the load result
+            if (((RdE == Rs1D) && (Rs1D != 5'b0)) || 
+                ((RdE == Rs2D) && (Rs2D != 5'b0))) begin
                 LoadUseHazard = 1'b1;
             end
         end
-    end
-
-    // CONTROL HAZARD DETECTION
-    // Detects control hazards from branches and jumps
-    always_comb begin
-        ControlHazard = 1'b0;
-        
-        // Method 1: Reactive - flush when branch/jump is actually taken
-        // This occurs when PCSrcE=1, indicating the branch was taken or jump executed
+        // Detects if there's a Jump / Branch
         if (PCSrcE) begin
             ControlHazard = 1'b1;
         end
-        
-        // Method 2: Proactive - could flush immediately when branch/jump is detected
-        // This would be more conservative but handles all branches/jumps
-        // Uncomment below for more aggressive flushing (flushes ALL branches, not just taken ones):
-        /*
-        if (BranchD || JumpD) begin
-            ControlHazard = 1'b1;
-        end
-        */
+
+
     end
 
-    // PIPELINE STALL LOGIC
-    // Stalls prevent new instructions from entering stalled stages
+    // Stall + Flush Flag logic
     always_comb begin
         StallF = 1'b0;
         StallD = 1'b0;
-        
-        // Stall for load-use hazard
-        // Stall fetch and decode to give load time to complete
-        if (LoadUseHazard) begin
-            StallF = 1'b1;  // Prevent new instruction fetch
-            StallD = 1'b1;  // Keep current decode instruction
-        end
-        
-        // Note: We don't stall for control hazards - we flush instead
-        // This is because stalling wouldn't help with mispredicted branches
-    end
-
-    // PIPELINE FLUSH LOGIC
-    // Flushes convert instructions to NOPs by clearing control signals
-    always_comb begin
         FlushD = 1'b0;
         FlushE = 1'b0;
-        
-        // Flush for control hazards (branch misprediction or jumps)
-        // Clear incorrectly fetched/decoded instructions
-        if (ControlHazard) begin
-            FlushD = 1'b1;  // Clear decode stage (wrong instruction fetched)
-            FlushE = 1'b1;  // Clear execute stage (wrong instruction decoded)
-        end
-        
-        // Flush execute stage for load-use hazard
-        // Insert bubble (NOP) in execute stage while stalling earlier stages
+
+        //Load-use hazard detected
         if (LoadUseHazard) begin
+            StallF = 1'b1;  // Prevent new instruction fetch
+            StallD = 1'b1;  // Keep current decode instruction frozen
             FlushE = 1'b1;  // Convert execute stage to NOP
+        end
+        // Control hazards
+        if (ControlHazard) begin 
+            FlushD = 1'b1;  
+            FlushE = 1'b1;  
         end
     end
 

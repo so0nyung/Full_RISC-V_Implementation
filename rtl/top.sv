@@ -3,6 +3,14 @@ module top #(
 )(
     input logic clk,
     input logic rst,
+    //Debugging outputs
+    output logic [DATA_WIDTH-1:0] t1,
+    output logic [DATA_WIDTH-1:0] t2,
+    output logic [DATA_WIDTH-1:0] t3,
+    output logic [DATA_WIDTH-1:0] t4,
+    output logic [DATA_WIDTH-1:0] s0,
+
+    //Test output
     output logic [DATA_WIDTH-1:0] a0
 );
 
@@ -38,8 +46,6 @@ logic [DATA_WIDTH-1:0] Int_InstrRegD;
 logic [DATA_WIDTH-1:0] Int_PCRegD;
 logic [DATA_WIDTH-1:0] Int_PCPlus4RegD;
 
-// Internal Wires for ID inputs
-// logic [DATA_WIDTH-1:0] Int_ResultW;
 
 // Internal Wires for IDtop -> IDEXReg
 logic Int_RegWriteDReg;
@@ -83,23 +89,19 @@ logic [4:0] Int_Rs1RegE;
 logic [4:0] Int_Rs2RegE;
 
 // Internal Wires for Extop Input
-    // logic [DATA_WIDTH-1:0] Int_ALUResultME-> From MemTop
-    // logic [DATA_WIDTH-1:0] Int_ResultW; -> Already made
 logic [1:0] Int_ForwardAE; // From Hazard Unit
 logic [1:0] Int_ForwardBE; // From Hazard Unit
 
 // Internal Wires for Extop -> ExMemReg
 logic Int_RegWriteEReg;
-// logic Int_PCSrcEReg;
 logic [1:0] Int_ResultSrcEReg;
 logic [2:0] Int_funct3EReg;
 logic Int_MemWriteEReg;
 logic [DATA_WIDTH-1:0] Int_ALUResultEReg;
 logic [4:0] Int_RdEReg;
 logic [DATA_WIDTH-1:0] Int_PCPlus4EReg;
-// logic [DATA_WIDTH-1:0] Int_PCTargetEReg;
 logic [DATA_WIDTH-1:0] Int_WriteDataEReg;
-// Internal Waires for Extop -> HAzard unit
+// Internal Wires for Extop -> HAzard unit
 logic Int_MemReadEHaz; // To Hazard Unit
 
 // Internal Waires for ExMemReg -> Memtop
@@ -197,6 +199,13 @@ IDtop #(
     .Rs2D(Int_Rs2DReg),
     .PCDout(Int_PCDReg),
     .PCPlus4Dout(Int_PCPlus4DReg),
+    // Debugging register files
+    .t1(t1),
+    .t2(t2),
+    .t3(t3),
+    .t4(t4),
+    .s0(s0),
+    // Actual test output
     .a0(a0)
 );
 
@@ -241,8 +250,8 @@ IDEXReg #(
     .funct3E(Int_funct3RegE),
     .JALRE(Int_JALRRegE),
     //Hazard Output
-    .Rs1Dout(Int_Rs1RegE),
-    .Rs2Dout(Int_Rs2RegE)
+    .Rs1E(Int_Rs1RegE),
+    .Rs2E(Int_Rs2RegE)
 );
  
 HazardUnit Hazard(
@@ -250,13 +259,10 @@ HazardUnit Hazard(
     .Rs2E(Int_Rs2RegE), // From Execute
     .RdE(Int_RdRegE),
     .RdM(Int_RdRegM),
-    .RegWriteM(Int_RegWriteMReg),
+    .RegWriteM(Int_RegWriteRegM),
     .RdW(Int_RdRegW),
     .RegWriteW(Int_RegWriteRegW),
     .MemReadE(Int_MemReadEHaz),
-    // .RegWriteE(Int_RegWriteEReg)
-    // .BranchD(Int_BranchDReg),
-    // .JumpD(Int_JumpDReg),
     .PCSrcE(Int_PCSrcExF),
     .Rs1D(Int_Rs1DReg),
     .Rs2D(Int_Rs2DReg),
@@ -342,6 +348,7 @@ MEMtop #(
     .PCPlus4M(Int_PCPlus4RegM),
     .funct3M(Int_funct3RegM),
     .RegWriteM(Int_RegWriteRegM),
+
     //Output
     .RegWriteMout(Int_RegWriteMReg), // Hazard Unit output also
     .ResultSrcMout(Int_ResultSrcMReg),

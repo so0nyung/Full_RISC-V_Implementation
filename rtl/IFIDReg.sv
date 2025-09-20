@@ -20,7 +20,8 @@ module IFIDReg #(
             instrD <= 32'b0;
             PCD <= 32'b0;
             PCPlus4D <= 32'b0;
-        end else if (! StallD) begin
+        end  
+        else if (! StallD) begin
             instrD <= instr; // Current Instruction
             PCD <= PCF; //Current PC Counter
             PCPlus4D <= PCPlus4F; // Sequentially next PC Counter

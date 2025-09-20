@@ -3,6 +3,7 @@ module IDtop #(
 )(
     //Inputs
     input logic clk,
+    // input logic rst,
     input logic RegWriteW,
     input logic [4:0] RdW,
     input logic [DATA_WIDTH-1:0] InstrD,
@@ -31,6 +32,11 @@ module IDtop #(
     output logic [DATA_WIDTH-1:0] PCPlus4Dout,
 
     //Output logic - Testing
+    output logic [DATA_WIDTH-1:0] t1,
+    output logic [DATA_WIDTH-1:0] t2,
+    output logic [DATA_WIDTH-1:0] t3,
+    output logic [DATA_WIDTH-1:0] t4,
+    output logic [DATA_WIDTH-1:0] s0,
     output logic [DATA_WIDTH-1:0] a0
 );
 
@@ -43,11 +49,11 @@ assign RdD = InstrD[11:7];
 assign Rs1D = InstrD[19:15];
 assign Rs2D = InstrD[24:20];
 
-
 ControlUnit Control(
     .op(InstrD[6:0]),
     .funct3(InstrD[14:12]),
     .funct7(InstrD[31:25]),
+    //Output
     .RegWriteD(RegWriteD),
     .ResultSrcD(ResultSrcD),
     .MemWriteD(MemWriteD),
@@ -71,6 +77,11 @@ RegFile #(
     .WE3(RegWriteW),
     .RD1(RD1), // Read Data 1
     .RD2(RD2), // Read Data 2
+    .t1(t1),
+    .t2(t2),
+    .t3(t3),
+    .t4(t4),
+    .s0(s0),
     .a0(a0) // a0 test output
 );
 
@@ -81,4 +92,5 @@ SignExt #(
     .ImmInput(InstrD[31:7]),
     .ImmExt(ImmExtD)
 );
+
 endmodule

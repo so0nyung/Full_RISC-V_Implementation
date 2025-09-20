@@ -1,11 +1,11 @@
 module ALU#(
     parameter DATA_WIDTH = 32
 )(
-    input logic [3:0] ALUControl,
-    input logic [DATA_WIDTH-1:0] SrcA,
-    input logic [DATA_WIDTH-1:0] SrcB,
-    output logic Zero,
-    output logic [DATA_WIDTH-1:0] ALUResult
+    input logic [3:0] ALUControl, // Controls the operations
+    input logic [DATA_WIDTH-1:0] SrcA, // Input A (Usually From Register)
+    input logic [DATA_WIDTH-1:0] SrcB, // Input B (Register or Immediate)
+    output logic Zero, // If the operation equals zero
+    output logic [DATA_WIDTH-1:0] ALUResult // Result of Operation
 );
 
     logic signed [DATA_WIDTH-1:0] signedA;

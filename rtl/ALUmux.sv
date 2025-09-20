@@ -7,6 +7,6 @@ module ALUmux #(
     output logic [DATA_WIDTH-1:0] SrcB
 );
 
-assign SrcB = (ALUsrc) ? ImmExt  : RD2;
+assign SrcB = (ALUsrc) ? ImmExt  : RD2; // Determines if we use the immediate or register value
 
 endmodule

@@ -15,7 +15,6 @@ module IFtop#(
 
 //Internal Wires
 logic [DATA_WIDTH-1:0] Int_PCF;
-// logic [DATA_WIDTH-1:0] Int_PCMuxRes;
 logic [DATA_WIDTH-1:0] Int_PCPlus4F;
 logic [DATA_WIDTH-1:0] Int_PCFmux;
 
@@ -45,11 +44,20 @@ InstMem #(
 
 always_ff @(posedge clk) begin
     if (rst) begin
-        Int_PCF <= 32'b0;  // Reset PC to 0
-    end else if (!StallF) begin
+        // Reset PC to start address
+        Int_PCF <= 32'h00000000;  
+    end 
+    else if (PCSrcE) begin  
+        // Branch or jump has highest priority
+        Int_PCF <= PCTargetE;
+    end 
+    else if (!StallF) begin  
+        // Normal sequential update (stall freezes PC)
         Int_PCF <= Int_PCFmux;
-    end
+    end 
+    // else: StallF=1, hold current Int_PCF (do nothing)
 end
+
 
 //Assigning internal wires
 assign PCF = Int_PCF;

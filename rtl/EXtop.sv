@@ -72,7 +72,7 @@ ALUmux #(
     .SrcB(SrcBE) //Output
 );
 
-PCTarget #(
+PCTarget #( // Basically calculates what our next instruction shld be
     .DATA_WIDTH(DATA_WIDTH)
 ) TargetPC (
     .PC(PCE),
@@ -105,19 +105,19 @@ RD2mux #(
 );
 
 // Logic for PCSrcE
-logic branch_condition;
+logic BranchCon;
 always_comb begin
     case(funct3E)
-        3'b000: branch_condition = Int_ZeroE;        // BEQ: branch if equal (Zero=1)
-        3'b001: branch_condition = ~Int_ZeroE;       // BNE: branch if not equal (Zero=0)
-        3'b100: branch_condition = ALUResultE[0];    // BLT: branch if less than
-        3'b101: branch_condition = ~ALUResultE[0];   // BGE: branch if greater/equal
-        3'b110: branch_condition = ALUResultE[0];    // BLTU: branch if less than unsigned
-        3'b111: branch_condition = ~ALUResultE[0];   // BGEU: branch if greater/equal unsigned
-        default: branch_condition = 1'b0;
+        3'b000: BranchCon = Int_ZeroE;        // BEQ: branch if equal (Zero=1)
+        3'b001: BranchCon = ~Int_ZeroE;       // BNE: branch if not equal (Zero=0)
+        3'b100: BranchCon = ALUResultE[0];    // BLT: branch if less than
+        3'b101: BranchCon = ~ALUResultE[0];   // BGE: branch if greater/equal
+        3'b110: BranchCon = ALUResultE[0];    // BLTU: branch if less than unsigned
+        3'b111: BranchCon = ~ALUResultE[0];   // BGEU: branch if greater/equal unsigned
+        default: BranchCon = 1'b0;
     endcase
     
-    PCSrcE = JumpE | (BranchE & branch_condition);
+    PCSrcE = JumpE | (BranchE & BranchCon); // Change if it's either a jump or branch
 end
 
 // Assignment

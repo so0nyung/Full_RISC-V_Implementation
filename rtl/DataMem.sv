@@ -18,7 +18,7 @@ end
 
 // To write to memory
 always_ff @(posedge clk) begin
-    if(MemWrite) begin
+    if(MemWrite) begin // If we are to write to memory
         case(funct3)
         3'b010: begin // Load word instructions
             memory[A] <= WD[7:0];

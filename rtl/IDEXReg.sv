@@ -39,29 +39,30 @@ module IDEXReg #(
     output logic [2:0] funct3E,
     output logic JALRE,
     // Hazard Outputs
-    output logic [4:0] Rs1Dout,
-    output logic [4:0] Rs2Dout
+    output logic [4:0] Rs1E,
+    output logic [4:0] Rs2E
 );
 
     always_ff @(posedge clk) begin
         if(rst || FlushE) begin
-            RegWriteE <= 1'b0;
+           RegWriteE  <= 1'b0;
             ResultSrcE <= 2'b0;
-            MemWriteE <= 1'b0;
-            JumpE <= 1'b0;
-            BranchE <= 1'b0;
-            ALUControlE <= 4'b0;
-            ALUSrcE <= 1'b0;
-            RD1E <= 32'b0;
-            RD2E <= 32'b0;
-            PCE <= 32'b0;
-            RdE <= 5'b0;
-            ImmExtE <= 32'b0;
-            PCPlus4E <= 32'b0;
-            JALRE <= 1'b0;
-            Rs1Dout <= 5'b0;
-            Rs2Dout <= 5'b0;
-            // PCTargetE <= 32'b0;
+            MemWriteE  <= 1'b0;
+            JumpE      <= 1'b0;
+            BranchE    <= 1'b0;
+            ALUControlE<= 4'b0;
+            ALUSrcE    <= 1'b0;
+            RD1E       <= 32'b0;
+            RD2E       <= 32'b0;
+            PCE        <= 32'b0;
+            RdE        <= 5'b0;
+            ImmExtE    <= 32'b0;
+            funct3E    <= 3'b0;
+            PCPlus4E   <= 32'b0;
+            JALRE      <= 1'b0;
+            Rs1E    <= 5'b0;
+            Rs2E    <= 5'b0;
+
         end
         else begin
             RegWriteE <= RegWriteD;
@@ -79,8 +80,8 @@ module IDEXReg #(
             PCPlus4E <= PCPlus4D;
             funct3E <=funct3D;
             JALRE <= JALRD;
-            Rs1Dout <= Rs1D;
-            Rs2Dout <= Rs2D;
+            Rs1E <= Rs1D;
+            Rs2E <= Rs2D;
         end
     end
 
