@@ -6,7 +6,7 @@ module IFtop#(
     input logic [DATA_WIDTH-1:0] PCTargetE, // From Execute
     input logic PCSrcE, // From Execute Stage
     input logic StallF, // From Hazard Unit
-    
+    input logic trigger, // For F1
     //OUTPUT
     output logic [DATA_WIDTH-1:0] Instr,
     output logic [DATA_WIDTH-1:0] PCF,
@@ -51,7 +51,7 @@ always_ff @(posedge clk) begin
         // Branch or jump has highest priority
         Int_PCF <= PCTargetE;
     end 
-    else if (!StallF) begin  
+    else if (!StallF & trigger) begin  
         // Normal sequential update (stall freezes PC)
         Int_PCF <= Int_PCFmux;
     end 

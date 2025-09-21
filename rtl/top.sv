@@ -151,6 +151,8 @@ IFtop #(
     .PCSrcE(Int_PCSrcExF),
     // Hazard Inputs
     .StallF(Int_StallHazF),
+    //F1 inputs
+    .trigger(trigger),
     //Output
     .Instr(Int_InstrFReg),
     .PCF(Int_PCFReg),
