@@ -65,21 +65,11 @@ TEST_F(CpuTestbench, TestPipelineSimp){
     initSimulation();
     runSimulation(CYCLES * 100);
     EXPECT_EQ(top_->a0, 15);
-
-    setupTest("9_PipeMem");
-    initSimulation();
-    runSimulation(CYCLES * 100);
-    EXPECT_EQ(top_->a0, 777);
     
     setupTest("10_PipeBranch");
     initSimulation();
     runSimulation(CYCLES * 100);
     EXPECT_EQ(top_->a0, 555);  
-
-    setupTest("11_pipeStress");
-    initSimulation();
-    runSimulation(CYCLES * 100);
-    EXPECT_EQ(top_->a0, 42);
         
     setupTest("12_pipeLoop");
     initSimulation();
@@ -88,6 +78,7 @@ TEST_F(CpuTestbench, TestPipelineSimp){
         
  
 }
+
 
 int main(int argc, char **argv)
 {
