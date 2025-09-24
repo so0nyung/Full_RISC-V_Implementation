@@ -48,10 +48,10 @@ end
             3'b001: begin
                 RD = {{16{memory[A+1][7]}}, memory[A+1], memory[A]};
             end
-            3'b000: begin
+            3'b000: begin // lb (sign-extend)
                 RD = {{24{memory[A][7]}}, memory[A]};
             end
-            3'b100: begin
+            3'b100: begin //lbu(zero-extend)
                 RD = {24'b0, memory[A]};
             end
             3'b101: begin

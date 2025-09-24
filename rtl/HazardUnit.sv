@@ -19,7 +19,7 @@ module HazardUnit (
     
     // Control Hazard Detection
     input logic PCSrcE,        // From Execute stage (indicates taken branch/jump)
-
+    input logic Cache_busy,
     // Pipeline control outputs
     output logic StallF,       // To IFtop - stall fetch stage
     output logic StallD,       // To IFIDReg - stall decode stage
@@ -87,7 +87,7 @@ module HazardUnit (
         FlushE = 1'b0;
 
         //Load-use hazard detected
-        if (LoadUseHazard) begin
+        if (LoadUseHazard || Cache_busy) begin
             StallF = 1'b1;  // Prevent new instruction fetch
             StallD = 1'b1;  // Keep current decode instruction frozen
             FlushE = 1'b1;  // Convert execute stage to NOP

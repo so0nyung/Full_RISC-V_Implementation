@@ -273,6 +273,7 @@ HazardUnit Hazard(
     .PCSrcE(Int_PCSrcExF),
     .Rs1D(Int_Rs1DReg),
     .Rs2D(Int_Rs2DReg),
+    .Cache_busy(Int_CacheBusy),
     //Output
     .StallF(Int_StallHazF), // Connect to IFtop 
     .StallD(Int_StallHazDReg), // Connect to IFIDReg
@@ -343,10 +344,12 @@ ExMemReg #(
     .PCPlus4M(Int_PCPlus4RegM)
 );
 
+logic Int_CacheBusy;
 MEMtop #(
     .DATA_WIDTH(DATA_WIDTH)
 ) Memory(
     .clk(clk),
+    .rst(rst),
     .ResultSrcM(Int_ResultSrcRegM),
     .MemWriteM(Int_MemWriteRegM),
     .ALUResultM(Int_ALUResultRegM),
@@ -357,6 +360,7 @@ MEMtop #(
     .RegWriteM(Int_RegWriteRegM),
 
     //Output
+    .cache_busy(Int_CacheBusy),
     .RegWriteMout(Int_RegWriteMReg), // Hazard Unit output also
     .ResultSrcMout(Int_ResultSrcMReg),
     .ReadDataM(Int_ReadDataMReg),

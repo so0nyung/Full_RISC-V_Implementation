@@ -32,7 +32,7 @@ public:
     // CPU instantiated outside of SetUp to allow for correct
     // program to be assembled and loaded into instruction memory
     void initSimulation()
-    {
+    {   
         top_ = new Vdut(context_);
         tfp_ = new VerilatedVcdC;
 
@@ -51,7 +51,8 @@ public:
 
     // Runs the simulation for a clock cycle, evaluates the DUT, dumps waveform.
     void runSimulation(int cycles = 1)
-    {
+    {   
+        top_->trigger = 1;
         for (int i = 0; i < cycles; i++)
         {
             for (int clk = 0; clk < 2; clk++)
