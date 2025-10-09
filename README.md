@@ -14,18 +14,59 @@ There are (will be*) several branches for the different versions of the CPU, lis
 
 | CPU| Branch |
 | - | - |
-| Single-Cycle| [Link]|
-| Pipelined | [Link] |
-| Cache | [Link] |
+| Single-Cycle| [Link](https://github.com/so0nyung/Full_RISC-V_Implementation/tree/Single_Cycle)|
+| Pipelined | [Link](https://github.com/so0nyung/Full_RISC-V_Implementation/tree/Pipelined) |
+| Cache | [Link](https://github.com/so0nyung/Full_RISC-V_Implementation/tree/Cache) |
 
 Each branch will have a README.md file detailing the design choices I made. To lighten my load (I gave myself two (about) weeks to finish this) I have built the pipelined and cache README.md files off the single-cycle README.md (I.e. if you are not sure where to start, I'd recommend reading the Single-cycle, followed by pipelined and cache version).
 
-The main brach contains (hopefully), a folder of each of the different versions, as well as (again, hopefully) a test that runs for all of them to compare the speed differences (This is ambitious I can't even lie). The main branch was the branch I tested the Single-Cycle version initially so there may be lingering files here and there, but for the most part that will be the ONLY test done.
+The main brach contains, a folder of each of the different versions, as well as a test that runs for all of them to compare the speed differences. The main branch was the branch I tested the Single-Cycle version initially so there may be lingering files here and there, but for the most part that will be the ONLY test done.
 
 The test would hopefully also produced the F1 and sine and cosine products. Because I do not have the ICL Vbuddy (Don't quote me on the name), I needed another way to visualise the results, so I made the scripts produce `.vcd` and graphable files, and subsequent scripts to plot them out.
 
 # Testing
 Testing used Google XXXX Scope to test on .cpp files. For individual components, individual values were input. For whole-of-CPU testing, assembly language turned to hexadeximals was used.
+
+# Final Products
+In this branch, I have gathered all the RISC-V CPU versions I have made in this project:
+
+| Type | Details |
+| - | - |
+| [Simplified](./rtl-Lab4/) | This was the beginning of my RISC-V CPU: A simplified version that only does several instructions |
+| [Single-Cycle](./rtl)| This was the first complete RISC-V CPU I made|
+| [Pipelined] | Second |
+| [Cache] | Third |
+# Results
+## Lookup Tables (LUTs)
+In real-world implementation, LUTs are used in place of computationally expensive calculations with faster table-indexed operations. This is one of the metrics to compare how much more computationally intensive each version of the CPU is.
+
+| Type | LUTS |
+| - | - |
+| Simplified|  |
+| Single-Cycle||
+| Pipelined |  |
+| Cache | |
+
+This isn't a statement of it's optimisation or efficiency compared to industry standards.
+
+
+## Timing of Testcases
+Because my simplified CPU does not have sufficient instructions, I have removed it from this testing. 
+
+### Executing
+To run this test, clone this repository and head to the `tb` folder. Then, type in the terminal:
+```
+./doit.sh   
+```
+
+In my testing, I got the following results:
+
+| Type | Timing (In ms) |
+| - | - |
+| Simplified|  |
+| Single-Cycle||
+| Pipelined |  |
+| Cache | |
 
 # References
 There are (most of) the 

@@ -6,7 +6,10 @@
 # Constants
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 TEST_FOLDER=$(realpath "$SCRIPT_DIR/tests")
-RTL_FOLDER=$(realpath "$SCRIPT_DIR/../rtl")
+SINGLE_CPU=$(realpath "$SCRIPT_DIR/../rtl-Single")
+PIPELINE_CPU=$(realpath "$SCRIPT_DIR/../rtl-Pipeline")
+CACHE_CPU=$(realpath "SCRIPT_DIR/../rtl-Cache")
+
 GREEN=$(tput setaf 2)
 RED=$(tput setaf 1)
 RESET=$(tput sgr0)
@@ -40,9 +43,9 @@ for file in "${files[@]}"; do
 
     # Translate Verilog -> C++ including testbench
     verilator   -Wall --trace \
-                -cc ${RTL_FOLDER}/${name}.sv \
+                -cc ${SINGLE_CPU}/${name}.sv \
                 --exe ${file} \
-                -y ${RTL_FOLDER} \
+                -y ${SINGLE_CPU} \
                 --prefix "Vdut" \
                 -o Vdut \
                 -LDFLAGS "-lgtest -lgtest_main -lpthread"
