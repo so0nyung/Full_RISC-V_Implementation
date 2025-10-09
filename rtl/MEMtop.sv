@@ -1,6 +1,5 @@
 module MEMtop #(
-    parameter DATA_WIDTH = 32,
-    parameter ENABLE_CACHE = 1  // Enable/disable cache (For testing)
+    parameter DATA_WIDTH = 32
 )(
     input  logic clk,
     input  logic rst,
@@ -22,102 +21,69 @@ module MEMtop #(
 );
 
     // Cache-Memory interface signals
-    logic cache_mem_read;
-    logic cache_mem_write; 
-    logic cache_mem_ready;
-    logic [DATA_WIDTH-1:0] cache_mem_data;
-    logic [DATA_WIDTH-1:0] cache_mem_addr;
-    logic [DATA_WIDTH-1:0] cache_mem_write_data;
-    logic [DATA_WIDTH-1:0] direct_mem_data;
-    
-    // Cache control signals  
-    logic cache_busy_internal;
-    logic cpu_load;
-    logic cpu_store;
-    
-    // Generate load/store signals based on CPU operations
-    assign cpu_load = (ResultSrcM == 2'b01);  // Load instruction detected
-    assign cpu_store = MemWriteM;              // Store instruction detected
+    logic CacheMem_Read;
+    logic CacheMem_Write; 
+    logic CacheMem_Ready;
+    logic [DATA_WIDTH-1:0] CacheMem_Data;
+    logic [DATA_WIDTH-1:0] CacheMem_Addr;
+    logic [DATA_WIDTH-1:0] CacheMem_WriteData;
 
-    // Debug signals (can be removed in production)
+    // Cache control signals  
+    logic Int_CacheBusy;
+    logic CPULoad;
+    logic CPUStore;
+
+    // Generate load/store signals based on CPU operations
+    assign CPULoad  = (ResultSrcM == 2'b01);  // Load instruction detected
+    assign CPUStore = MemWriteM;              // Store instruction detected
+
+    // Debug signals (optional)
     /* verilator lint_off UNUSEDSIGNAL */
-    logic cache_hit, cache_miss;
+    logic CacheHit;
+    logic CacheMiss;
     /* verilator lint_on UNUSEDSIGNAL */
 
-    generate
-        if (ENABLE_CACHE) begin : gen_cache
-            // L1 Cache instance
-            L1cache #(
-                .DATA_WIDTH(DATA_WIDTH),
-                .SET_WIDTH(9),                         // 512 sets (2^9)
-                .TAG_WIDTH(DATA_WIDTH - 9 - 2)        // 21 bits for tag (32-9-2)
-            ) l1_cache_inst (
-                .clk(clk),
-                .rst_n(~rst),                          // Cache uses active-low reset
-                .load(cpu_load),
-                .store(cpu_store),
-                .address(ALUResultM),                  // Byte-addressed memory access
-                .data_in(WriteDataM),
-                .funct3(funct3M),
-                .mem_data(cache_mem_data),
-                .mem_ready(cache_mem_ready),
-                .hit(cache_hit),
-                .miss(cache_miss),
-                .mem_write(cache_mem_write),
-                .mem_read(cache_mem_read),
-                .busy(cache_busy_internal),
-                .data_out(ReadDataM),
-                .mem_addr(cache_mem_addr),
-                .mem_write_data(cache_mem_write_data)
-            );
+    // L1 Cache instance
+    L1cache #(
+        .DATA_WIDTH(DATA_WIDTH),
+        .SET_WIDTH(9),                         // 512 sets (2^9)
+        .TAG_WIDTH(DATA_WIDTH - 9 - 2)        // 21 bits for tag (32-9-2)
+    ) Cache (
+        .clk(clk),
+        .rst_n(~rst),                          // Cache uses active-low reset
+        .load(CPULoad),
+        .store(CPUStore),
+        .address(ALUResultM),                  // Byte-addressed memory access
+        .data_in(WriteDataM),
+        .funct3(funct3M),
+        .mem_data(CacheMem_Data), // From Data Memory
+        .mem_ready(CacheMem_Ready),
+        .hit(CacheHit),
+        .miss(CacheMiss),
+        .mem_write(CacheMem_Write), // To Memory
+        .mem_read(CacheMem_Read),
+        .busy(Int_CacheBusy),
+        .data_out(ReadDataM), // Output
+        .mem_addr(CacheMem_Addr),
+        .mem_write_data(CacheMem_WriteData) // To Memory 
+    );
 
-            // Data Memory instance - accessed only through cache
-            DataMem #(
-                .DATA_WIDTH(DATA_WIDTH),
-                .ADDR_WIDTH(17)                        // Ensure sufficient address width
-            ) Data_Memory (
-                .clk(clk),
-                .funct3(funct3M),                      // Pass through for memory sizing
-                .MemWrite(cache_mem_write),            // Cache controls memory writes
-                .A(cache_mem_addr),                    // Cache provides memory address
-                .WD(cache_mem_write_data),             // Cache provides write data
-                .RD(cache_mem_data)                    // Memory provides read data to cache
-            );
+    // Data Memory accessed only through cache
+    DataMem #(
+        .DATA_WIDTH(DATA_WIDTH),
+        .ADDR_WIDTH(17)
+    ) Data_Memory (
+        .clk(clk),
+        .funct3(funct3M),
+        .MemWrite(CacheMem_Write),            // Cache controls memory writes
+        .A(CacheMem_Addr),                    // Cache provides memory address
+        .WD(CacheMem_WriteData),             // Cache provides write data
+        .RD(CacheMem_Data)                    // Memory provides read data to cache
+    );
 
-            // Simple memory ready logic - DataMem responds immediately
-            assign cache_mem_ready = cache_mem_read || cache_mem_write;
-            assign cache_busy = cache_busy_internal;
-            
-        end else begin : gen_direct
-            // Direct memory access path (bypass cache entirely)
-            DataMem #(
-                .DATA_WIDTH(DATA_WIDTH),
-                .ADDR_WIDTH(17)
-            ) Data_Memory (
-                .clk(clk),
-                .funct3(funct3M),
-                .MemWrite(MemWriteM),      // CPU directly controls memory writes
-                .A(ALUResultM),            // CPU directly provides memory address
-                .WD(WriteDataM),           // CPU directly provides write data
-                .RD(direct_mem_data)       // Memory directly provides read data
-            );
-            
-            // Direct assignment for non-cached mode
-            assign ReadDataM = direct_mem_data;
-            assign cache_busy = 1'b0;      // Never stall pipeline when no cache
-            
-            // Tie off unused cache interface signals
-            assign cache_mem_read = 1'b0;
-            assign cache_mem_write = 1'b0;
-            assign cache_mem_ready = 1'b0;
-            assign cache_mem_data = 32'b0;
-            assign cache_mem_addr = 32'b0;
-            assign cache_mem_write_data = 32'b0;
-            assign cache_hit = 1'b0;
-            assign cache_miss = 1'b0;
-            assign cache_busy_internal = 1'b0;
-        end
-    endgenerate
+    // Memory ready and stall logic
+    assign CacheMem_Ready = CacheMem_Read || CacheMem_Write;
+    assign cache_busy = Int_CacheBusy;
 
     // Pipeline register passthrough
     assign RegWriteMout  = RegWriteM;

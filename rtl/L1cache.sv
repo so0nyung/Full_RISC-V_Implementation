@@ -20,14 +20,6 @@ module L1cache #(
     output logic [DATA_WIDTH-1:0]    data_out,
     output logic [DATA_WIDTH-1:0]    mem_addr,
     output logic [DATA_WIDTH-1:0]    mem_write_data
-    // output logic [DATA_WIDTH-1:0] debug_cache_data,
-    // output logic [TAG_WIDTH-1:0] debug_tag,
-    // output logic [SET_WIDTH-1:0] debug_index,
-    // output logic debug_hit_way,
-    // output logic [DATA_WIDTH-1:0] debug_sized_write,
-    // output logic [DATA_WIDTH-1:0] debug_actual_cache_line,
-    // output logic [DATA_WIDTH-1:0] debug_sized_read
-
 );
 
     // FSM states
@@ -220,8 +212,8 @@ logic [DATA_WIDTH-1:0] latched_write_data;
                         if(store) begin
                             cache[index][hit_way].data <= sized_write_data;
                             cache[index][hit_way].dirty <= 1;
-                            latched_write_data <= sized_write_data; // Add this line
-
+                            latched_write_data <= sized_write_data;
+    
                         end
                         // Update LRU on hit
                         LRU[index] <= hit_way ? 0 : 1;
@@ -284,12 +276,4 @@ logic [DATA_WIDTH-1:0] latched_write_data;
         end
     end
 
-// // Debugging assignments
-// assign debug_cache_data = cache[index][hit_way].data;
-// assign debug_tag = tag;
-// assign debug_index = index;
-// assign debug_hit_way = hit_way;
-// assign debug_sized_write = sized_write_data;
-// assign debug_sized_read = sized_read_data;
-// assign debug_actual_cache_line = cache[index][way].data;
 endmodule

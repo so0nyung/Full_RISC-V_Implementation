@@ -21,7 +21,7 @@ When writing to a cache block, we need to make sure to modify the actual memory 
 
 
 ## Multilevel Cache
-For this CPU, I hope to implement a three level cache system
+For this CPU, I had hoped to implement a three level cache system. But in the end, I just built 1 level of cache.
 
 ## Implementation 
 ### Parameters, Inputs & Outputs
@@ -44,3 +44,41 @@ For outputs, we have:
 4. Busy - indicates that the CPU is handling a miss case
 5. Dataout -The data returned from the cache to the CPU
 6. MemData - This is any evicted data that has to be written back to the memory file. We basically rewrite over the memory whenever it is evicted
+
+### Finite State Machine
+For the cache, I use a Finite State machine (FSM) to differentiate between 5 states of the cache: IDLE, READ_MISS, WRITE_MISS, WRITE_BACK, UPDATE.
+
+##### IDLE State
+In the `IDLE` state, we check for two scenarios:
+1. **Miss occurs**. If a miss occurs, we check if the current index we have has a dirty bit, which leads to the `WRITE_BACK` state. If there is a load instruction, we set it to `READ_MISS` state. If there is nothing else, we set it to `WRITE_MISS` state.
+
+2. **Hit occurs**. If a hit occurs (I.e. not a miss) we check if any data needs to be stored and store it. Then we update the Least Recently Used (LRU) index.
+
+##### WRITE BACK State
+In the `WRITE_BACK` state, we check for three scenarios:
+1. If we are executing a `load` instruction. If so, we move to the `READ_MISS` state.
+2. If we are executing a `store` instruction. If so , we move to a `WRITE_MISS` state.
+3. If none of the above, we move to `IDLE` state.
+
+
+##### READ_MISS state
+When we enter the `READ_MISS` state, we always turn the cache status to `busy` - because there is a reading mismatch, so we cannot proceed until it is resolved. If the memory is ready to be read, we set the `MEMREAD` flag off (to avoid reading the wrong information), and we set the state to `UPDATE` state.
+
+##### WRITE_MISS state
+When we enter the `WRITE_MISS` state, we first set the cache status to `busy`. We then check if the memory is ready, and latch the write data, and shift the status to `UPDATE`.
+
+##### UPDATE state
+In the `UPDATE` state, we do several things first:
+1. Mark the cache line as valid by flipping the `valid` bit
+2. If the instruction was a `store`, mark the line as `dirty`
+3. Store the tag bits.
+From there we store the data, taking either from the `latched_write_data` or `mem_data` depending on whether we use a store instruction.
+Finally, we update the LRU info for this set, clear the busy flag, and return the state to `IDLE`.
+
+### Memtop
+In our `MEMtop` file, we have now placed the cache in between the Data memory and the outputs of `MEMtop`. Here, the data memory remains unchanged. Instead, I have adjusted our cache to send out the desired address to the Data memory. Meaning we go through the cache first, before accessing the data memory if needed.
+
+## Testing
+
+Because this was the last implemntation, I have neglected to include any other tests besides the give 5 tests. But they all work :)
+

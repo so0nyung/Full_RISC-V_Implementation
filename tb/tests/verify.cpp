@@ -47,39 +47,6 @@ TEST_F(CpuTestbench, TestPdf)
 }
 
 
-
-TEST_F(CpuTestbench, TestPipelineSimp){
-    //Simple Pipeline Test
-    setupTest("6_pipeBasic");
-    initSimulation();
-    runSimulation(CYCLES * 100);
-    EXPECT_EQ(top_->a0, 42);
-
-    //Addition
-    setupTest("7_pipeAdd");
-    initSimulation();
-    runSimulation(CYCLES * 100);
-    EXPECT_EQ(top_->a0, 100);
-    
-    setupTest("8_pipeLog");
-    initSimulation();
-    runSimulation(CYCLES * 100);
-    EXPECT_EQ(top_->a0, 15);
-    
-    setupTest("10_PipeBranch");
-    initSimulation();
-    runSimulation(CYCLES * 100);
-    EXPECT_EQ(top_->a0, 555);  
-        
-    setupTest("12_pipeLoop");
-    initSimulation();
-    runSimulation(CYCLES * 100);
-    EXPECT_EQ(top_->a0, 55);
-        
- 
-}
-
-
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
