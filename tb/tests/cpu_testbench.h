@@ -51,7 +51,8 @@ public:
 
     // Runs the simulation for a clock cycle, evaluates the DUT, dumps waveform.
     void runSimulation(int cycles = 1)
-    {
+    {   
+        top_->trigger = 1;
         for (int i = 0; i < cycles; i++)
         {
             for (int clk = 0; clk < 2; clk++)
