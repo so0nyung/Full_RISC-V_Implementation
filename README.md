@@ -38,17 +38,6 @@ In this branch, I have gathered all the RISC-V CPU versions I have made in this 
 | [Cache] | Third |
 # Results
 ## Lookup Tables (LUTs)
-In real-world implementation, LUTs are used in place of computationally expensive calculations with faster table-indexed operations. This is one of the metrics to compare how much more computationally intensive each version of the CPU is.
-
-| Type | LUTS |
-| - | - |
-| Simplified|  |
-| Single-Cycle||
-| Pipelined |  |
-| Cache | |
-
-This isn't a statement of it's optimisation or efficiency compared to industry standards.
-
 
 ## Timing of Testcases
 Because my simplified CPU does not have sufficient instructions, I have removed it from this testing. 
@@ -63,10 +52,9 @@ In my testing, I got the following results:
 
 | Type | Timing (In ms) |
 | - | - |
-| Simplified|  |
-| Single-Cycle||
-| Pipelined |  |
-| Cache | |
+| Single-Cycle| 1662 ms |
+| Pipelined | 4161 ms |
+| Cache | 4943 ms |
 
 # References
 There are (most of) the 

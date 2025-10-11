@@ -2,6 +2,7 @@ module top#(
     parameter DATA_WIDTH =32
 )(
     input logic clk,
+    input logic trigger,
     output [DATA_WIDTH-1 :0] a0
 );
 
@@ -35,6 +36,7 @@ PCItop #(
     .clk(clk),
     .PCSrc(Int_PCSrc), // Decides what output to put
     .PCTarget(Int_PCTarget),
+    .trigger(trigger),
     //Output
     .Instr(Int_Instr), // To send to CREtop
     .PC(Int_PC), // To send to ADPtop

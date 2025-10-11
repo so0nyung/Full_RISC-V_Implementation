@@ -3,6 +3,7 @@ module PCItop#(
 )(
     input logic clk,
     input logic PCSrc,
+    input logic trigger,
     input logic [DATA_WIDTH-1:0] PCTarget,
     output logic [DATA_WIDTH-1:0] Instr,
     output logic [DATA_WIDTH-1:0] PC,
@@ -40,7 +41,9 @@ InstMem #(
 );
 
 always_ff @(posedge clk) begin
-    Reg_PC <= Int_PC;
+    if(trigger)begin 
+        Reg_PC <= Int_PC;
+    end
 end
 
 // Testing purposes
