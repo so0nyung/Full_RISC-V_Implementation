@@ -9,7 +9,7 @@ This is a continuation of my Lab 4- Reduced RISC-V CPU, where I attempt to imple
 
 
 # Structure
-There are (will be*) several branches for the different versions of the CPU, listed in the table below:
+There are several branches for the different versions of the CPU, listed in the table below:
 
 
 | CPU| Branch |
@@ -25,7 +25,7 @@ The main brach contains, a folder of each of the different versions, as well as 
 The test would hopefully also produced the F1 and sine and cosine products. Because I do not have the ICL Vbuddy (Don't quote me on the name), I needed another way to visualise the results, so I made the scripts produce `.vcd` and graphable files, and subsequent scripts to plot them out.
 
 # Testing
-Testing used Google XXXX Scope to test on .cpp files. For individual components, individual values were input. For whole-of-CPU testing, assembly language turned to hexadeximals was used.
+Testing used Google Gtest to test on .cpp files. For individual components, individual values were input. For whole-of-CPU testing, assembly language turned to hexadeximals was used.
 
 # Final Products
 In this branch, I have gathered all the RISC-V CPU versions I have made in this project:
@@ -37,7 +37,6 @@ In this branch, I have gathered all the RISC-V CPU versions I have made in this 
 | [Pipelined] | Second |
 | [Cache] | Third |
 # Results
-## Lookup Tables (LUTs)
 
 ## Timing of Testcases
 Because my simplified CPU does not have sufficient instructions, I have removed it from this testing. 
